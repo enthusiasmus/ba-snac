@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>F(H)(ace)-Book</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+	var members, loadingComplete;
+
+	$(document).ready(function(){	
+		//define the options of our ajax-request
+		$.ajaxSetup({
+	      	dataType: "json",
+	      	error: "Die Facebook-Mitglieder können derzeit nicht geladen werden, bitte probieren Sie es später nocheinmal!",
+	      	timeoutNumber: 2000,
+	      	success: function(data){
+	      				members = data;
+	      				addMembersToScreen();
+	        		 }
+		});
+		
+		$("#fh_salzburg").click(function() {
+			$("#hint").remove();
+			$("#fh_salzburg").animate({
+				top: '-=500'
+				}, 5000, function() {
+				    $(this).remove();
+					$("#container").animate({
+						left: '+=200'
+						}, 2000, function() {
+							$("#questions").fadeToggle();
+							$("#informations").fadeToggle();
+						}
+					);
+				}
+				);
+		});		
+		
+		//get fh-salzburg members, which i had extracted from the graph api
+		$.ajax("fh_salzburg_members.json");		
+		window.setInterval(function(){
+			checkLoadingOfImages();
+		}, 1000);
+	});
+	
+	function checkLoadingOfImages(){
+		if(!loadingComplete){
+		  		for(var i=0 ; i < document.images.length ; i++){
+		   			if(!document.images[i].complete)
+		   				return false;
+		   		}
+		   	loadingComplete = true;
+		   	$("#container").show();
+		   	$("#hint").fadeToggle(5000);
+		   	$("#loading").hide();
+	   	}
+	}
+	
+	function addMembersToScreen(){
+		var k=0;
+		for(var i=0; i<(members.data.length)*3; i++){
+			if(i >= 1240)
+				break;
+			if(k+1 >= members.data.length)
+				k=0;
+			
+			$("#container").prepend("\<a href='http://www.facebook.com/profile.php?id="+members.data[k].id+
+									"'\>\<img class='picture' src='http:\/\/graph.facebook.com\/"+members.data[k].id+
+									"\/picture\/'\>\<\/a\>");
+			k++;
+  		}
+  		
+  		k=0;
+	}
+</script>
+<style type="text/css">
+	body, html{
+		font-family: Helvetica;
+		font-size: 14px;
+		padding: 0px;
+		margin: 0px;
+		width: 100%;
+		height: 100%;
+		color: #444;
+	}
+	#main_container{
+		position: absolute;
+		top: 0px;
+		width: 100%;
+		height: 100%;
+		background: #fff;
+		min-height: 480px;
+	}
+	#container{
+		display: none;
+	}
+	#container, #fh_salzburg{
+		margin-left: -300px;
+		margin-top: -240px;
+		position: absolute;
+		top:50%;
+		left: 50%;
+		
+		z-index: 1;
+		width: 600px;
+		padding: 15px;
+		
+		text-align: center;
+	}
+	#fh_salzburg{
+		background: url(fh_salzburg.png);
+		z-index: 10;
+		height: 480px;
+	}
+	.picture{
+		width: 15px; 
+		height: 15px; 
+		float:left;
+		
+		-webkit-transform:scale(1);
+		-moz-transform:scale(1);
+		-o-transform:scale(1);
+		
+		-webkit-transition-duration: 0.5s;
+		-moz-transition-duration: 0.5s;
+		-o-transition-duration: 0.5s;
+	}
+	.picture:hover{
+		-webkit-transform:scale(5);
+		-moz-transform:scale(5);
+		-o-transform:scale(5); 
+		
+		box-shadow:0px 0px 10px white;
+		-webkit-box-shadow:0px 0px 10px white; 
+		-moz-box-shadow:0px 0px 10px white;
+		
+		z-index: 3;
+	}
+	#questions{
+		display: none;
+		margin-left: -500px;
+		margin-top: -180px;
+		position: absolute;
+		top:50%;
+		left: 50%;
+		
+		z-index: 2;
+		width: 300px;
+		padding: 15px;		
+		
+		font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+	}
+	#questions ul{
+		list-style: none;
+		text-align: center;
+	}
+	#questions li{
+		padding: 20px 0px 20px 0px;
+	}
+	#informations{
+		display:none;
+	}
+	#hint{
+		display:none;
+		margin-top: 470px;
+	}
+	#loading{
+		margin-top: 200px;
+	}
+	a, img{
+		outline: 0;
+		border: 0;
+		text-decoration: none;
+	}
+</style>
+</head>
+<body>
+	<noscript>Für diese Seite brauchen Sie Javascript!</noscript>
+	<div id="main_container">
+		<div id="questions">
+			<ul>
+				<li>Wieviel Individualität besitzt Du selbst?</li>
+				<li>Bist Du oft der Meinung deiner Mitmenschen?</li>
+				<li>Du bist hier auch abgebildet?</li>
+				<li>Stellst du hin und wieder etwas in Frage?</li>
+				<li><u><b>Aktion: <big>"Denke kritisch!"</big></b></u></li>
+			</ul>
+		</div>
+		<div id="container">
+			<span id="informations">
+				<small><b>Jeder</b> der einzelnen Personen hier ist bei Bedarf an der <b>FH-Salzburg</b> anzutreffen.<br>
+				<small>Für mehr Information über den einzelnen klicke einfach auf das jeweilige Foto.</small></small>
+			</span>
+		</div>
+		<div id="fh_salzburg">
+			<div id="loading">Die Seite wird geladen...</div>
+			<div id="hint"><small><b>Klick auf das Bild!</b></small></div>
+		</div>
+	</div>
+</body>
+</html>

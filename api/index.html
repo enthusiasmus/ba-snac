@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>Lach-Kanal</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+    var player;
+
+	$(document).ready(function(){
+	  //This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "http://www.youtube.com/player_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      
+      //define the options of our ajax-request
+      $.ajaxSetup({
+      	async: true, //default value = true
+      	dataType: "text",
+      	error: "Derzeit kann kein Video geladen werden, wir bitten Sie es zu einem späteren Zeitpunkt erneunt zu probieren!",
+      	timeoutNumber: 60000,
+      	url: "video.php",
+      	success: function(data){
+      				$('#youtube_video').text("");
+      				player = new YT.Player('youtube_video', {
+	          			height: '370',
+	          			width: '600',
+	          			videoId: data,
+	          			playerVars: {
+	          				autohide: 0,
+	          				autplay: 1,
+	          				theme: "dark"
+	          			},
+	          			events: {
+	            			'onReady': startVideo,
+	            			'onStateChange': changedPlayerState
+	          			}
+        		 	});
+        		 }
+      });
+	});
+	
+	//This function creates an <iframe> (and YouTube player) after the API code downloads.
+	function onYouTubePlayerAPIReady() {
+		$.ajax();
+	}
+    //This function gets called when the player is ready	function startVideo(event){
+		event.target.playVideo();
+    }
+    //when the video ends the next video should get played
+    function changedPlayerState(event){
+    	if(event.data == YT.PlayerState.ENDED){
+			playNextVideo();
+    	}	
+    }
+    //getting the next video
+    function playNextVideo(){
+        $.ajax();
+    	$('#youtube_video').text("Nächstes Video wird geladen...");
+    	return false;
+    }
+</script>
+<style type="text/css">
+	body, html{
+		font-family: Helvetica;
+		font-size: 14px;
+		padding: 0px;
+		margin: 0px;
+		width: 100%;
+		height: 100%;
+		color: #444;
+	}
+	.main_container{
+		position: absolute;
+		top: 0px;
+		width: 100%;
+		height: 100%;
+		background: url(background.jpg);
+		min-height: 685px;
+	}
+	.container{
+		margin-left: -400px;
+		position: absolute;
+		top: 0px;
+		left: 50%;
+		text-align: center;
+		background: #f9f9f9;
+		height: 100%;
+		width: 780px;
+		-moz-box-shadow: 0 0 5px 5px #888;
+		-webkit-box-shadow: 0 0 5px 5px#888;
+		box-shadow: 0 0 5px 5px #888;
+
+	}
+	#youtube_video{
+		width: 600px;
+		height: 370px;
+		max-height: 370px;
+		border: 1px solid #777;
+		margin: 30px auto;
+		vertical-align: middle;
+		background: #eee; line-height:390px;
+		overflow:hidden;
+	}
+	#next_button{
+		margin: 30px 0px 20px 0px;
+	}
+	#next_button a{
+		background: #555;
+		padding: 10px;
+		color: #fff;
+		text-decoration: none;
+		border: #000 1px solid;
+		-moz-transition-property: all;
+	 	-moz-transition-duration: 250ms;
+		-moz-transition-timing-function: ease-in-out;
+		-webkit-transition-property: all;
+		-webkit-transition-duration: 250ms;
+		-webkit-transition-timing-function: ease-in-out;
+		-o-transition-property: all;
+		-o-transition-duration: 250ms;
+		-o-transition-timing-function: ease-in-out;
+	}
+	#next_button a:hover{
+		background: #999;
+	}
+	h1{
+		background: #AFD506;
+		-moz-box-shadow: 0 0 5px #888;
+		-webkit-box-shadow: 0 0 5px#888;
+		box-shadow: 0 0 5px #888;
+		text-align:center;
+		padding: 10px;
+		font-size: 36px;
+	}
+</style>
+</head>
+<body>
+	<div class="main_container">
+		<div class="container">
+			<h1>Lach-Kanal</h1>
+			<b>Brauchst du mal wieder was zum Lachen?</b><br><br>
+			Dann bist du hier richtig! Hier gibt es den ganzen Tag <b>nur</b> lustige und ausgewählte Kurz-Videos zu sehen!<br>
+			Du brauchst <i>keinen einzigen Klick</i> zutätigen! Lehn dich einfach zurück und <i>entspann Dich</i>!
+			<div id="youtube_video">
+				<noscript>Bitte aktiviere Javascript!<br></noscript>
+				Video wird geladen...
+			</div>
+			<div id="next_button"><a href="#" onclick="return playNextVideo()">Nächstes Video</a></div>
+		</div>
+	</div>
+</body>
+</html>
