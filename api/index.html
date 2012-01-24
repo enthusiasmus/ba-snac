@@ -56,8 +56,9 @@
     }
     //getting the next video
     function playNextVideo(){
+    	$('#youtube_video').remove();
+    	$('#next_button').before("<div id='youtube_video'>Nächstes Video wird geladen...</div>");
         $.ajax();
-    	$('#youtube_video').text("Nächstes Video wird geladen...");
     	return false;
     }
 </script>
@@ -102,6 +103,7 @@
 		vertical-align: middle;
 		background: #eee; line-height:390px;
 		overflow:hidden;
+		margin-bottom: 0px;
 	}
 	#next_button{
 		margin: 30px 0px 20px 0px;
